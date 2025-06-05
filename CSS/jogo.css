@@ -1,0 +1,39 @@
+body { 
+  margin: 0; 
+  background: #111; 
+  color: #fff; 
+  font-family: sans-serif; 
+}
+    
+canvas { 
+  display: block; 
+  margin: auto; 
+  background: #222; 
+}
+    
+#characterSelect {
+  position: absolute;
+  top: 20px; left: 20px;
+  background: #000; border: 2px solid #555; padding: 10px;
+}
+
+#characterSelect button, #restartBtn {
+  margin: 5px; 
+  padding: 5px 10px;
+}
+
+#message {
+  text-align: center;
+  font-size: 24px;
+  margin-top: 20px;
+}
+
+#restartBtn {
+  display: none;
+  margin: 10px auto;
+  display: block;
+  background: #444;
+  color: white;
+  border: none;
+  cursor: pointer;
+}

@@ -1,0 +1,32 @@
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./CSS/jogo.css">
+  <title>Void Arena</title>
+  </head>
+<body>
+  
+  <div id="characterSelect">
+    <p>Escolha seu personagem:</p>
+    <button onclick="selectCharacter('warrior')">Guerreiro</button>
+    <button onclick="selectCharacter('mage')">Mago</button>
+    <button onclick="selectCharacter('healer')">Curandeiro</button>
+    <button onclick="selectCharacter('tank')">Tanque</button>
+  </div>
+
+  <div id="message"></div>
+
+  <button id="restartBtn" onclick="resetGame()" style="display: none;">Reiniciar</button> <!--Reiniciando a música junto-->
+  <canvas id="gameCanvas" width="1200" height="600"></canvas>
+
+  <footer>
+    <audio controls autoplay id="gameMusic">
+      <source src="./músicas/Two Steps From Hell em 8 bit.mp3">
+    </audio>
+  </footer>
+
+  <script src="./JS/script.js"></script>
+
+</body>
+</html>
