@@ -186,6 +186,36 @@ class Character {
     let friends = this.team === 'ally' ? allies : enemies;
     let targets = this.team === 'ally' ? enemies : allies;
 
+    // NOVO: tanque IA vai direto para o inimigo e usa dano corpo a corpo apenas
+  if (this.type === 'tank' && !this.isPlayer) {
+    // Achar inimigo mais próximo
+    let target = targets.reduce((closest, curr) => {
+      const d = Math.hypot(curr.x - this.x, curr.y - this.y);
+      return !closest || d < closest.dist ? { dist: d, unit: curr } : closest;
+    }, null)?.unit;
+
+    if (!target) return;
+
+    // Mover na direção do inimigo
+    const dx = target.x - this.x;
+    const dy = target.y - this.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist > 35) {
+      this.x += this.speed * dx / dist;
+      this.y += this.speed * dy / dist;
+    } else {
+      // Quando perto, usar dano corpo a corpo
+      this.areaTouchDamage();
+    }
+
+    // Manter tanque dentro dos limites do mapa
+    this.x = Math.max(mapBounds.xMin, Math.min(this.x, mapBounds.xMax - 30));
+    this.y = Math.max(mapBounds.yMin, Math.min(this.y, mapBounds.yMax - 30));
+
+    return; // Sai do método para não executar o resto da IA
+  }
+
     if (this.type === 'healer') {
       let lowHpAlly = friends.filter(a => a.hp < a.maxHp * 0.8).sort((a, b) => (a === player ? -1 : 1))[0];
       if (lowHpAlly && this.skillCooldown === 0) {
@@ -212,7 +242,7 @@ class Character {
     const dx = target.x - this.x;
     const dy = target.y - this.y;
     const dist = Math.hypot(dx, dy);
-    const typeDistances = { warrior: 80, mage: 120, healer: 100, tank: 60 };
+    const typeDistances = { warrior: 80, mage: 180, healer: 100, tank: 60 };
     const desiredDistance = typeDistances[this.type] ?? 100;
 
     if (dist > desiredDistance + 10) {
@@ -221,6 +251,14 @@ class Character {
     } else if (dist < desiredDistance - 10 && this.type !== 'tank') {
       this.x -= this.speed * dx / dist;
       this.y -= this.speed * dy / dist;
+      // Se o mago estiver perto da borda, ataca direto em vez de tentar recuar
+const nearBorder = this.x < mapBounds.xMin + 30 || this.x > mapBounds.xMax - 60 ||
+                   this.y < mapBounds.yMin + 30 || this.y > mapBounds.yMax - 60;
+
+if (this.type === 'mage' && nearBorder && this.skillCooldown === 0) {
+  this.useSkill(target.x + 15, target.y + 15, target);
+  return;
+}
     } else if (this.skillCooldown === 0 && Math.random() < 0.9) {
       // Previsão de movimento
       const tx = target.x + 15;
@@ -281,11 +319,12 @@ if (this.team === 'enemy') {
 
 
   areaTouchDamage() {
-    enemies.forEach(t => {
-      const dist = Math.hypot((this.x + 15) - (t.x + 15), (this.y + 15) - (t.y + 15));
-      if (dist < 35) t.hp -= 5;
-    });
-  }
+  const targetList = this.team === 'ally' ? enemies : allies;
+  targetList.forEach(t => {
+    const dist = Math.hypot((this.x + 15) - (t.x + 15), (this.y + 15) - (t.y + 15));
+    if (dist < 35) t.hp -= 0.4;
+  });
+}
 }
 
 // ====== FUNÇÕES DO JOGO ======
