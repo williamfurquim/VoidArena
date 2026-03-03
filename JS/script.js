@@ -23,7 +23,7 @@ let aiming = false;
 let mouseX = 0;
 let mouseY = 0;
 
-// ====== NOVO: Limites do mapa ======
+// ====== LIMITES DO MAPA
 const mapBounds = {
   xMin: 20,
   yMin: 20,
@@ -31,7 +31,7 @@ const mapBounds = {
   yMax: canvas.height - 50
 };
 
-// ====== CLASSES ======
+// ====== CLASSES 
 
 class Explosion {
   constructor(x, y, radius = 60) {
@@ -87,7 +87,7 @@ class Projectile {
       if (target.team === this.team) {
         target.hp = Math.min(target.maxHp, target.hp + 30); // cura aliados
       } else {
-        target.hp -= 18; // dano a inimigos, caso haja (ex: curandeiro ofensivo)
+        target.hp -= 18; // dano a inimigos, caso haja
       }
     } else if (this.type === 'mage') {
       targets.forEach(unit => {
@@ -123,7 +123,7 @@ class Character {
     warrior: 3.0,
     mage: 2.8,
     healer: 2.5,
-    tank: 4 // ← aumentamos a velocidade do tanque
+    tank: 4 
   };
   this.speed = baseSpeeds[type];
 
@@ -165,7 +165,6 @@ class Character {
   if (this.isPlayer && keys[' ']) {
     this.areaTouchDamage();
   } else if (!this.isPlayer) {
-    // Se IA estiver perto de inimigos, cause dano
     const targetList = this.team === 'ally' ? enemies : allies;
     const closeEnemy = targetList.find(t => Math.hypot((this.x + 15) - (t.x + 15), (this.y + 15) - (t.y + 15)) < 35);
     if (closeEnemy) this.areaTouchDamage();
@@ -174,7 +173,7 @@ class Character {
 }
   }
 
-  // ======= ALTERADO: movimentação respeita limites =======
+  // ======= MOVIMENTAÇÕES QUE RESPEITAM LIMITES =======
   move() {
     if (keys['w'] && this.y > mapBounds.yMin) this.y -= this.speed;
     if (keys['s'] && this.y + 30 < mapBounds.yMax) this.y += this.speed;
@@ -186,7 +185,6 @@ class Character {
     let friends = this.team === 'ally' ? allies : enemies;
     let targets = this.team === 'ally' ? enemies : allies;
 
-    // NOVO: tanque IA vai direto para o inimigo e usa dano corpo a corpo apenas
   if (this.type === 'tank' && !this.isPlayer) {
     // Achar inimigo mais próximo
     let target = targets.reduce((closest, curr) => {
@@ -205,15 +203,14 @@ class Character {
       this.x += this.speed * dx / dist;
       this.y += this.speed * dy / dist;
     } else {
-      // Quando perto, usar dano corpo a corpo
+      // Usar dano corpo a corpo
       this.areaTouchDamage();
     }
 
-    // Manter tanque dentro dos limites do mapa
     this.x = Math.max(mapBounds.xMin, Math.min(this.x, mapBounds.xMax - 30));
     this.y = Math.max(mapBounds.yMin, Math.min(this.y, mapBounds.yMax - 30));
 
-    return; // Sai do método para não executar o resto da IA
+    return; 
   }
 
     if (this.type === 'healer') {
@@ -251,7 +248,6 @@ class Character {
     } else if (dist < desiredDistance - 10 && this.type !== 'tank') {
       this.x -= this.speed * dx / dist;
       this.y -= this.speed * dy / dist;
-      // Se o mago estiver perto da borda, ataca direto em vez de tentar recuar
 const nearBorder = this.x < mapBounds.xMin + 30 || this.x > mapBounds.xMax - 60 ||
                    this.y < mapBounds.yMin + 30 || this.y > mapBounds.yMax - 60;
 
@@ -260,7 +256,6 @@ if (this.type === 'mage' && nearBorder && this.skillCooldown === 0) {
   return;
 }
     } else if (this.skillCooldown === 0 && Math.random() < 0.9) {
-      // Previsão de movimento
       const tx = target.x + 15;
       const ty = target.y + 15;
       const dx2 = tx - (this.x + 15);
@@ -275,7 +270,7 @@ if (this.type === 'mage' && nearBorder && this.skillCooldown === 0) {
           predictedY = ty + (target.speed * dy2 / dist2) * (dist2 / projSpeed);
         }
 
-// Reduzir precisão da IA inimiga
+// PRECISÃO IA INIMIGA
 if (this.team === 'enemy') {
   const accuracyFactor = 0.75;
   predictedX += (Math.random() - 0.5) * 30 * (1 - accuracyFactor);
@@ -327,8 +322,7 @@ if (this.team === 'enemy') {
 }
 }
 
-// ====== FUNÇÕES DO JOGO ======
-
+// ====== FUNÇÕES DO JOGO 
 function randomPos(isEnemy) {
   const margin = 50;
   return {
@@ -345,7 +339,6 @@ function selectCharacter(type) {
   allies.push(player);
   const types = ['warrior', 'mage', 'healer', 'tank'];
 
-  // Adiciona os 3 aliados restantes (sem repetir a classe do jogador)
   types.filter(t => t !== type).forEach(t => {
     const { x, y } = randomPos(false);
     allies.push(new Character(x, y, t));
@@ -403,7 +396,7 @@ function checkWinCondition() {
 }
 
 function resetGame() {
-  // Limpa todas as variáveis do jogo
+  // Limpeza
   allies.length = 0;
   enemies.length = 0;
   projectiles.length = 0;
@@ -412,11 +405,9 @@ function resetGame() {
   gameOver = false;
   aiming = false;
 
-  // Esconde elementos do final do jogo
   document.getElementById('message').innerText = '';
   document.getElementById('restartBtn').style.display = 'none';
 
-  // Exibe a tela de seleção de personagem
   document.getElementById('characterSelect').style.display = 'block';
 }
 
@@ -425,7 +416,7 @@ function endGame(message) {
   document.getElementById('message').innerText = message;
     setTimeout(() => {
     resetGame();
-  }, 3000); // espera 3 segundos antes de resetar
+  }, 3000); // 3 segundos
 }
 
 document.addEventListener('keydown', (e) => {
@@ -448,4 +439,5 @@ canvas.addEventListener('click', () => {
     player.useSkill(mouseX, mouseY);
     aiming = false;
   }
+
 });
