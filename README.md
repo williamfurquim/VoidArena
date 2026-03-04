@@ -14,6 +14,7 @@ O jogador controla um personagem enquanto os demais atuam com IA estratégica au
 👉 CONCEITOS TÉCNICOS APLICADOS
 
 ⏺️ ARQUITETURA
+
 O projeto utiliza estrutura orientada a objetos com as seguintes classes principais:
 - Character ✅
 - Projectile ✅
@@ -22,6 +23,7 @@ O projeto utiliza estrutura orientada a objetos com as seguintes classes princip
 Cada entidade encapsula estado, comportamento, renderização e regras de interação.
 
 ⏺️ INTELIGÊNCIA ARTIFICIAL
+
 Cada classe possui comportamento específico:
 - Tank persegue o inimigo mais próximo e aplica dano por proximidade ✅
 - Healer prioriza aliados com HP abaixo de 80% ✅
